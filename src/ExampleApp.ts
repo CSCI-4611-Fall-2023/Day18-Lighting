@@ -9,9 +9,9 @@ import * as gfx from 'gophergfx'
 export class ExampleApp extends gfx.GfxApp
 {   
     private day = false;
-    private ambientLight: gfx.AmbientLight = new gfx.AmbientLight();
-    private pointLight: gfx.PointLight = new gfx.PointLight;
-    private directionalLight: gfx.DirectionalLight = new gfx.DirectionalLight();
+    private ambientLight: gfx.AmbientLight = new gfx.AmbientLight(new gfx.Vector3(0,0,0));
+    private pointLight: gfx.PointLight = new gfx.PointLight(new gfx.Vector3(0,0,0));
+    private directionalLight: gfx.DirectionalLight = new gfx.DirectionalLight(new gfx.Vector3(0,0,0));
     private lamp: gfx.Mesh3 = new gfx.Mesh3();
     private lampDayMaterial: gfx.PhongMaterial = new gfx.PhongMaterial();
     private lampNightMaterial: gfx.UnlitMaterial = new gfx.UnlitMaterial();
@@ -24,42 +24,6 @@ export class ExampleApp extends gfx.GfxApp
         super();
     }
 
-    onKeyDown(event: KeyboardEvent): void {
-        this.toggleDayNight();
-    }
-
-    toggleDayNight(): void {
-        this.day = !this.day;
-        if (this.day) {
-            this.renderer.background = new gfx.Color(205/255, 237/255, 242/255);
-
-            this.ambientLight.diffuseIntensity = new gfx.Vector3(50/255, 50/255, 50/255);
-        
-            this.pointLight.visible = false;
-
-            this.directionalLight.visible = true;
-            this.directionalLight.position = new gfx.Vector3(-1, -1, 1);
-            this.directionalLight.diffuseIntensity = new gfx.Vector3(255/255, 255/255, 240/255);
-            this.directionalLight.specularIntensity = new gfx.Vector3(100/255, 100/255, 100/255);
-
-            this.lamp.material = this.lampDayMaterial;
-        
-        } else {
-            this.renderer.background = new gfx.Color(40/255, 45/255, 46/255)
-
-            this.ambientLight.diffuseIntensity = new gfx.Vector3(20/255, 20/255, 20/255);
-
-            this.pointLight.visible = true;
-            this.pointLight.position = new gfx.Vector3(800, 60, -400);
-            this.pointLight.diffuseIntensity = new gfx.Vector3(200/255, 200/255, 150/255);
-            this.pointLight.specularIntensity = new gfx.Vector3(100/255, 100/255, 100/255);
-
-            this.directionalLight.visible = false;
-
-            this.lamp.material = this.lampNightMaterial;
-        }
-    }
-
     // --- Initialize the graphics scene ---
     createScene(): void 
     {
@@ -68,17 +32,21 @@ export class ExampleApp extends gfx.GfxApp
         this.camera.position = new gfx.Vector3(500, 500, 500 / Math.tan(Math.PI * 30 / 180));
         this.camera.lookAt(new gfx.Vector3(500, 500, 0), new gfx.Vector3(0, -1, 0));
 
-        // Create an ambient light
-        this.ambientLight = new gfx.AmbientLight(new gfx.Vector3(0.2, 0.2, 0.2));
+        // Add lights to the scene
+        // Ambient does not have a position
         this.scene.add(this.ambientLight);
 
-        this.pointLight.position.set(.75, 1.1, 1);
+        // The point light is positioned at the location of the street lamp
+        this.pointLight.position = new gfx.Vector3(800, 60, -400);
         this.scene.add(this.pointLight);
 
+        // For directional lights, the position is interpreted as the direction TO the light
+        // so this light is coming from the right, up, and behind.
         this.directionalLight.position.set(.75, 1.1, 1)
-        this.directionalLight.visible = false;
         this.scene.add(this.directionalLight);
 
+
+        // ground
         const ground = new gfx.Node3();
         ground.position = new gfx.Vector3(500, 1000, 0);
         this.scene.add(ground);
@@ -161,6 +129,27 @@ export class ExampleApp extends gfx.GfxApp
         this.toggleDayNight();
     }
 
+    onKeyDown(event: KeyboardEvent): void {
+        this.toggleDayNight();
+    }
+
+    toggleDayNight(): void {
+        this.day = !this.day;
+        if (this.day) {
+            this.renderer.background = new gfx.Color(0.8, 0.93, 0.95);
+            this.lamp.material = this.lampDayMaterial;
+
+            // TODO: configure the ambient light, point light, and directional light for day
+
+        
+        } else {
+            this.renderer.background = new gfx.Color(0.16, 0.18, 0.18)
+            this.lamp.material = this.lampNightMaterial;
+
+            // TODO: configure the ambient light, point light, and directional light for night
+
+        }
+    }
 
     // --- Update is called once each frame by the main graphics loop ---
     update(deltaTime: number): void 
