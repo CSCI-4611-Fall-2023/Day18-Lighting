@@ -42,7 +42,7 @@ export class ExampleApp extends gfx.GfxApp
 
         // For directional lights, the position is interpreted as the direction TO the light
         // so this light is coming from the right, up, and behind.
-        this.directionalLight.position.set(.75, 1.1, 1)
+        this.directionalLight.position.set(-.75, -1.1, 1);
         this.scene.add(this.directionalLight);
 
 
@@ -76,9 +76,9 @@ export class ExampleApp extends gfx.GfxApp
 
         // snowman
         const snowmanMaterial = new gfx.PhongMaterial();
-        snowmanMaterial.diffuseColor = new gfx.Color(200/255, 200/255, 200/255);
+        snowmanMaterial.diffuseColor = new gfx.Color(255/255, 255/255, 255/255);
         snowmanMaterial.specularColor = new gfx.Color(255/255, 255/255, 255/255);
-        snowmanMaterial.shininess = 20.0;
+        snowmanMaterial.shininess = 10.0;
 
         const snowman = gfx.Geometry3Factory.createSphere(300, 3);
         snowman.position = new gfx.Vector3(500, 800, -600);
@@ -140,13 +140,29 @@ export class ExampleApp extends gfx.GfxApp
             this.lamp.material = this.lampDayMaterial;
 
             // TODO: configure the ambient light, point light, and directional light for day
+            this.ambientLight.visible = true;
+            this.ambientLight.ambientIntensity = new gfx.Vector3(0.4, 0.4, 0.4);
 
-        
+            this.pointLight.visible = false;
+
+            this.directionalLight.visible = true;
+            this.directionalLight.diffuseIntensity = new gfx.Vector3(0.8, 0.8, 0.7);
+            this.directionalLight.specularIntensity = new gfx.Vector3(0.5, 0.5, 0.45);
+            
         } else {
             this.renderer.background = new gfx.Color(0.16, 0.18, 0.18)
             this.lamp.material = this.lampNightMaterial;
 
             // TODO: configure the ambient light, point light, and directional light for night
+            this.ambientLight.visible = true;
+            this.ambientLight.ambientIntensity = new gfx.Vector3(0.2, 0.2, 0.25);
+
+            this.pointLight.visible = true;
+            this.pointLight.diffuseIntensity = new gfx.Vector3(0.6, 0.6, 0.6);
+            this.pointLight.specularIntensity = new gfx.Vector3(0.3, 0.3, 0.3);
+
+
+            this.directionalLight.visible = false;
 
         }
     }
